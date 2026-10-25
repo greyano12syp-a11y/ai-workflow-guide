@@ -36,11 +36,59 @@ Windows 优先使用用户指定的非系统盘目录；其他平台使用用户
 
 网关 provider 为 `magpie`，协议为 `responses`。核对原端口是否被其他实例占用；不接管或停止来源不明的服务。
 
-Jev 默认关闭。仅在用户授权外传精简意图、费用范围明确且凭证就绪时启用。实际启用的模型组先排除未授权渠道，不能依赖提示词阻止网关自动回退。
+Jev 默认关闭。用户选择接入时，执行下面的可选步骤；仅在用户授权外传精简意图、费用范围明确且凭证就绪时调用。实际启用的模型组先排除未授权渠道，不能依赖提示词阻止网关自动回退。
 
 凭证由用户在本机交互输入或通过受支持的安全配置提供。用户本人完成登录、验证码和真实人工授权。不要把密钥写进聊天、命令参数、截图或日志；不要复用作者的认证文件。
 
 **完成条件：**配置解析有效，差异只涉及授权项，模型与权限绑定准确，未授权渠道不会被自动选择，备份与回退可用。
+
+<a id="jev-setup"></a>
+
+### 第三步 A：Jev 可选接入
+
+仅在用户选择 Jev 时执行；未选择则保持 `off`，继续第四步。功能、模式、费用和门槛以 [README 的 Jev 选项](README.md#jev-option) 为准。本节提供调用合同，不要求安装额外 CLI，也不把仅存在于作者机器上的 Router 当作本仓库提供的组件。
+
+**1. 确认入口与真实开关。** 优先复用用户已有编排器或官方 SDK。明确它在哪里读取 `off`、`shadow`、`active`，谁验证授权与风险结果，谁保存任务绑定和调用预算。若没有对应实现，只能报告“API 可接入，自动调度尚未实现”；不要凭空添加一个无人读取的配置键。
+
+**2. 配置凭证。** 用户本人通过现有安全存储或交互终端提供 key。官方 SDK 可读取 `TYPESAFE_API_KEY`；不要要求用户将真实值粘贴进聊天，也不要为了检查而回显环境变量。凭证、认证缓存及其备份须排除在 Git 跟踪和公开材料之外。
+
+若用户尚无可用凭证且官方控制台无法访问（本次文档核验遇到 HTTP `451`），报告该阻塞并保持 `off`；不得宣称已开户或配置成功，不绕过访问限制、不自动换服务商。
+
+**3. 调用官方决策 API。** 按 [官方快速开始](https://docs.typesafe.ai/introduction/quickstart) 或 [HTTP API 合同](https://docs.typesafe.ai/api/system-one) 使用现有 SDK／HTTP 客户端。地址为 `POST https://api.typesafe.ai/v1/systemone`，使用 Bearer 认证与 `Content-Type: application/json`；认证头由程序从安全配置注入，不写入示例文件。Jev 的专用接口不能直接当成 Magpie 的 Responses／Chat Completions 模型来调用。
+
+⚠️ 特别提醒：下面仅为请求体示例，不会自行执行；真正发送会使用账户额度，需先有有效凭证、明确费用授权和 HTTPS 连通性。
+
+```json
+{
+  "model": "jev-latest",
+  "state": {
+    "task_summary": "Read a public sample document and list three headings. Do not modify files.",
+    "task_kind": "read"
+  },
+  "questions": {
+    "capability": {
+      "type": "choice",
+      "instructions": "Choose the minimum capability needed for task_summary. This is a capability recommendation, not permission to execute.",
+      "criteria": {
+        "LIGHT": "Clear, bounded reading or mechanical work.",
+        "STANDARD": "Routine analysis or implementation with several connected steps.",
+        "DEEP": "Difficult diagnosis, architecture, or substantial uncertainty.",
+        "UNCERTAIN": "The summary lacks enough information to choose."
+      }
+    }
+  }
+}
+```
+
+这是合成的**能力建议**示例，没有实现风险门禁，也没有授权任何文件操作。编排器还须独立核实真实用户授权，并处理自己的风险判断；不能把示例直接升级为无人监督的执行入口。
+
+**4. 读取和校验返回。** HTTP 成功后，再检查 `answers.capability` 的类型、选项、概率与 `confidence`；异常或缺失字段不得视为通过。记录响应 `model`、`usage.input_tokens`、`usage.output_tokens` 和实测耗时，不编造返回示例或把请求的别名当作实际返回版本。`UNCERTAIN` 或能力置信不足进入明确的主 Agent 判断；收到有效人工门禁、拒绝或不合格风险结果时停止。
+
+**5. 处理错误与成本。** `401` 检查凭证状态，`400/422` 检查请求合同；`429/529` 属于限流或服务过载。参见 [官方错误说明](https://docs.typesafe.ai/api/errors)。SDK 默认策略可能重试，首次验证应关闭自动重试；生产重试必须有单独的次数、退避和预算限制。超时或 TLS 错误不得关闭证书验证、换成未经授权的代理，也不得当作成功分类。
+
+**6. 分层验收和关闭。** 先用离线合成响应检查：模式关闭时零外部调用、低置信与字段缺失分支、风险拒绝、授权不足和预算耗尽均按合同处理。随后在授权内发送一次上面的最小请求，只记录脱敏结果。若选择 `shadow`，确认能力派工仍由主 Agent 决定、风险门禁仍生效；选择 `active` 后确认建议确实进入现有调度入口。最后检查回到 `off` 后不会再次发起 Jev 请求，同时保留未解决的风险门禁，不能靠关开关解除阻塞。
+
+**完成条件：**分别报告“凭证配置”“请求响应”“调度接入”“任务验收”。单次 API 成功只证明该请求成功；未做真实调用或自动调度验证时明确列为未验证。主模型、角色权限、原有失败预算和必需独立验收保持有效。
 
 ## 第四步：确认编排机制真实存在
 
