@@ -1,5 +1,7 @@
 # 给 AI Agent 的本机接入说明
 
+**语言 / Language:** **简体中文** | [English](docs/en/AI_SETUP.md) | [日本語](docs/ja/AI_SETUP.md) | [Español](docs/es/AI_SETUP.md) | [Français](docs/fr/AI_SETUP.md) | [Português (Brasil)](docs/pt-BR/AI_SETUP.md)
+
 仅在用户要求安装或配置本仓库工作流时使用。先读取 [README.md](README.md)；模型 ID、角色权限、费用边界、计数、超时和验收语义以该文档为唯一规范。本文件规定执行顺序与完成条件。
 
 这是文档仓库，不包含 Router 源码或安装器。用户复制任务指令后，你才能在其授权范围内执行。不要将全文写进用户的全局 AGENTS.md 或每轮重复加载。

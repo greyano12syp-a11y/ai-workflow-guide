@@ -1,5 +1,7 @@
 # AI 分工工作流：免费优先，按需升级，独立验收
 
+**语言 / Language:** **简体中文** | [English](docs/en/README.md) | [日本語](docs/ja/README.md) | [Español](docs/es/README.md) | [Français](docs/fr/README.md) | [Português (Brasil)](docs/pt-BR/README.md)
+
 **按当前任务难度选择够用的模型，遇到难题升级，难点解决后降回适合后续任务的档位，最后用检查结果判断有没有做好。**
 
 这是面向初学者和 AI Agent 的安装、配置与使用指南。你提供目标、账户和授权，自己的 Agent 根据本文完成本机配置。优先复用已有工具与环境。
