@@ -290,9 +290,10 @@ flowchart LR
 
 **自愿打赏，不强求，金额随意。不打赏也不影响免费获取和使用本仓库的公开内容。**
 
-微信和支付宝收款码如下，点击图片可查看原图。感谢每一份支持！
+微信、支付宝和 Payoneer 收款码如下，点击图片可查看原图。感谢每一份支持！
 
 <p align="center">
   <a href="assets/support/wechat-pay.png"><img src="assets/support/wechat-pay.png" alt="微信打赏收款码" width="280" /></a>
   <a href="assets/support/alipay.jpg"><img src="assets/support/alipay.jpg" alt="支付宝打赏收款码" width="280" /></a>
+  <a href="assets/support/payoneer.png"><img src="assets/support/payoneer.png" alt="Payoneer 自愿打赏收款码" width="280" /></a>
 </p>
