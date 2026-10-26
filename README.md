@@ -279,3 +279,20 @@ flowchart LR
 **给 AI 的执行顺序与完成条件：**[AI_SETUP.md](AI_SETUP.md)
 
 本页采用 GitHub 支持的 Mermaid 流程图和 Markdown 表格，不依赖自建网页服务。参见 [GitHub 官方图表文档](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams)。
+
+---
+
+<a id="support"></a>
+
+## 自愿打赏
+
+这套 AI 分工协作工作流的开发、测试和整理持续了约两个月，也投入了不少实际费用。如果这份指南对你有帮助，欢迎自愿打赏，支持后续测试、文档整理与维护。
+
+**自愿打赏，不强求，金额随意。不打赏也不影响免费获取和使用本仓库的公开内容。**
+
+微信和支付宝收款码如下，点击图片可查看原图。感谢每一份支持！
+
+<p align="center">
+  <a href="assets/support/wechat-pay.png"><img src="assets/support/wechat-pay.png" alt="微信打赏收款码" width="280" /></a>
+  <a href="assets/support/alipay.jpg"><img src="assets/support/alipay.jpg" alt="支付宝打赏收款码" width="280" /></a>
+</p>
